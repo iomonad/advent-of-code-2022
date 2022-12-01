@@ -2,6 +2,8 @@
   (:require [clojure.test :refer :all]
             [aoc22.core :refer :all]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+
+(deftest aoc22-test
+  (testing "day1"
+    (is (= (day1 "day1") 68775)
+        (= (day1-bis "day1") 202585))))
