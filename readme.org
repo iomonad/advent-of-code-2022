@@ -1,4 +1,4 @@
-* AOC 2022 [![Clojure CI](https://github.com/iomonad/advent-of-code-2022/actions/workflows/clojure.yml/badge.svg?branch=master)](https://github.com/iomonad/advent-of-code-2022/actions/workflows/clojure.yml) 
+* AOC 2022 [[Clojure CI](https://github.com/iomonad/advent-of-code-2022/actions/workflows/clojure.yml/badge.svg?branch=master)](https://github.com/iomonad/advent-of-code-2022/actions/workflows/clojure.yml) 
 ** Day 1
 Value max & sum
 ** Day 2
