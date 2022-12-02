@@ -11,7 +11,7 @@
 
 (defn file->seq
   "Convert file to lines lazyseq"
-  ([path] (str/split-lines (slurp (io/resource path))))
+  ([path] (file->seq path identity))
   ([path modifier-fn]
    (->> (slurp (io/resource path))
         (str/split-lines)

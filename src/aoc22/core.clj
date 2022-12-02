@@ -65,9 +65,7 @@
                       (m/match [elf choice]
                                [_   :X] ((comp ref loose) elf)
                                [_   :Y] (+ 3 (ref elf))
-                               [_   :Z] (+ 6 ((comp ref win) elf))))
-                   ) 0))))
-
+                               [_   :Z] (+ 6 ((comp ref win) elf))))) 0))))
 
 (comment
   (time (day2 "day2"))
