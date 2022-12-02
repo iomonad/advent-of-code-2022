@@ -33,11 +33,9 @@
 ;;; Day1
 ;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-;;; ROCK    A | X
-;;; LEAF    B | Y
-;;; CISSOR  C | Z
-
 (defn day2
+  "Can be implemented with bitmasks and factorized with idx,
+  but don't have time to have an intelligent approach"
   [file]
   (->> (file->seq file #(str/split % #" "))
        (map (partial map keyword))
@@ -52,9 +50,25 @@
                              [:B  :Z] (+ 6 3)
                              [:C  :X] (+ 6 1)
                              [:C  :Y] (+ 0 2)
-                             [:C  :Z] (+ 3 3)))
-                 ) 0)))
+                             [:C  :Z] (+ 3 3))))
+               0)))
+
+(defn day2-bis
+  [file]
+  (let [win {:A :Y :B :Z :C :X}
+        loose {:A :Z :B :X :C :Y}
+        ref {:X 1 :Y 2 :Z 3 :A 1 :B 2 :C 3}]
+    (->> (file->seq file #(str/split % #" "))
+         (map (partial map keyword))
+         (reduce (fn transpose [acc [elf choice]]
+                   (+ acc
+                      (m/match [elf choice]
+                               [_   :X] ((comp ref loose) elf)
+                               [_   :Y] (+ 3 (ref elf))
+                               [_   :Z] (+ 6 ((comp ref win) elf))))
+                   ) 0))))
+
 
 (comment
   (time (day2 "day2"))
-  )
+  (time (day2-bis "day2")))
