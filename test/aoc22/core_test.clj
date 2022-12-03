@@ -2,7 +2,6 @@
   (:require [clojure.test :refer :all]
             [aoc22.core :refer :all]))
 
-
 (deftest aoc22-test
   (testing "day1"
     (is (= (day1 "day1") 68775)
@@ -12,5 +11,4 @@
         (= (day2-bis "day2") 12091)))
   (testing "day3"
     (is (= (day3 "day3") 7845)
-        ;;(= (day3-bis "day3") nil)
-        )))
+        (= (day3-bis "day3") 2790))))

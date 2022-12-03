@@ -76,6 +76,12 @@
 ;;; Day3
 ;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+(def rotate-chars
+  (partial map (fn [c]
+                 (if (Character/isUpperCase c)
+                   (+ 0x1B (- (int c) 0x41))
+                   (- (int c) 0x60)))))
+
 (defn day3
   [file]
   (->> (file->seq file)
@@ -84,14 +90,18 @@
                    [(subs x 0 (/ (count x) 2))
                     (subs x (/ (count x) 2) (count x))])))
        (map (fn [[l r]] (apply str (set/intersection (set l) (set r)))))
-       (mapcat (partial map (fn [c]
-                              (if (Character/isUpperCase c)
-                                (+ 0x1B (- (int c) 0x41))
-                                (- (int c) 0x60)))))
+       (mapcat rotate-chars)
        sum))
 
+(defn day3-bis
+  [file]
+  (->> (file->seq file)
+       (map (partial map identity))
+       (partition-all 3)
+       (map (fn [[a b c]] (apply str (set/intersection (set a) (set b) (set c)))))
+       (mapcat rotate-chars)
+       sum))
 
 (comment
   (day3 "day3")
-  )
-
+  (day3-bis "day3"))
