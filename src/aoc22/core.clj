@@ -1,7 +1,8 @@
 (ns aoc22.core
   (:require [aoc22.utils :refer [file->seq safe-parseint sum]]
             [clojure.core.match :as m]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.set :as set]))
 
 ;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ;;; Day1
@@ -30,7 +31,7 @@
   (time (day1-bis "day1")))
 
 ;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-;;; Day1
+;;; Day2
 ;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 (defn day2
@@ -70,3 +71,27 @@
 (comment
   (time (day2 "day2"))
   (time (day2-bis "day2")))
+
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+;;; Day3
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+(defn day3
+  [file]
+  (->> (file->seq file)
+       (mapv (fn [x]
+              (mapv (partial map identity)
+                   [(subs x 0 (/ (count x) 2))
+                    (subs x (/ (count x) 2) (count x))])))
+       (map (fn [[l r]] (apply str (set/intersection (set l) (set r)))))
+       (mapcat (partial map (fn [c]
+                              (if (Character/isUpperCase c)
+                                (+ 0x1B (- (int c) 0x41))
+                                (- (int c) 0x60)))))
+       sum))
+
+
+(comment
+  (day3 "day3")
+  )
+

@@ -9,4 +9,8 @@
         (= (day1-bis "day1") 202585)))
   (testing "day2"
     (is (= (day2 "day2") 14163)
-        (= (day2-bis "day2") 12091))))
+        (= (day2-bis "day2") 12091)))
+  (testing "day3"
+    (is (= (day3 "day3") 7845)
+        ;;(= (day3-bis "day3") nil)
+        )))
