@@ -1,5 +1,6 @@
 (ns aoc22.core
-  (:require [aoc22.utils :refer [file->seq safe-parseint sum]]
+  (:require [aoc22.utils :refer [file->seq safe-parseint sum
+                                 inclusive-range]]
             [clojure.core.match :as m]
             [clojure.string :as str]
             [clojure.set :as set]))
@@ -105,3 +106,33 @@
 (comment
   (day3 "day3")
   (day3-bis "day3"))
+
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+;;; Day4
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+(defn day4
+  [file]
+  (->> (file->seq file)
+       (map #(partition 2 (map read-string (rest (re-find #"(\d+)-(\d+),(\d+)-(\d+)" %)))))
+       (reduce (fn [acc [[a b] [y z]]]
+                 (m/match [(<= a y) (>= b z) (>= a y) (<= b z)]
+                          [true    true    _       _] (inc acc)
+                          [_       _      true    true] (inc acc)
+                          :else acc)) 0)))
+
+(defn day4-bis
+  [file]
+  (->> (file->seq file)
+       (map #(partition 2 (map read-string (rest (re-find #"(\d+)-(\d+),(\d+)-(\d+)" %)))))
+       (filter (fn [[[a b] [y z]]] (if (<= a y) (>= b y) (<= a z))))
+       count))
+
+(comment
+  (day4 "day4")
+  (day4-bis "day4"))
+
+
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+;;; Day5
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
