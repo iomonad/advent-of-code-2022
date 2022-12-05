@@ -14,4 +14,8 @@
         (= (day3-bis "day3") 2790)))
   (testing "day4"
     (is (= (day4 "day4") 500)
-        (= (day4-bis "day4") 815))))
+        (= (day4-bis "day4") 815)))
+  (testing "day5"
+    (is (= (day5 "day5") "TGWSMRBPN")
+        ;(= (day5-bis "day5") 
+        )))

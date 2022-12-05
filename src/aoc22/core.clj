@@ -136,3 +136,34 @@
 ;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ;;; Day5
 ;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+(defn day5
+  [file]
+  (let [body (file->seq file)
+        stack (->> (take 9 body)
+                   (map (partial keep-indexed #(when (odd? %1) %2)))
+                   (map (partial keep-indexed #(when (even? %1) %2)))
+                   (apply map list)
+                   (map (partial remove #(Character/isWhitespace %)))
+                   (reduce (fn [acc s]
+                             (assoc acc (read-string (str (last s)))
+                                    (drop-last s)))
+                           (sorted-map)))]
+    (->> (drop 10 body)
+         (map (fn [eip]
+                (map read-string
+                     (rest (re-find #"move (\d+) from (\d+) to (\d+)" eip)))))
+         ((fn [instructions]
+            (loop [s stack
+                   i (apply list instructions)]
+              (if (empty? i)
+                (apply str (map first (vals s)))
+                (let [[c f t] (peek i)
+                      tm (reverse (take c (s f)))
+                      aus (-> (update s t (partial concat tm))
+                              (update f (partial drop c)))]
+                  (recur aus (pop i))))))))))
+
+(comment
+  (time (day5 "day5"))
+  )
