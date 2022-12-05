@@ -138,7 +138,7 @@
 ;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 (defn day5
-  [file]
+  [file cycle-fn]
   (let [body (file->seq file)
         stack (->> (take 9 body)
                    (map (partial keep-indexed #(when (odd? %1) %2)))
@@ -159,11 +159,11 @@
               (if (empty? i)
                 (apply str (map first (vals s)))
                 (let [[c f t] (peek i)
-                      tm (reverse (take c (s f)))
+                      tm (cycle-fn (take c (s f)))
                       aus (-> (update s t (partial concat tm))
                               (update f (partial drop c)))]
                   (recur aus (pop i))))))))))
 
 (comment
-  (time (day5 "day5"))
-  )
+  (time (day5 "day5" reverse))
+  (time (day5 "day5" identity)))
