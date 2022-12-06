@@ -1,10 +1,11 @@
 (ns aoc22.core
-  (:require [aoc22.utils :refer [file->seq safe-parseint sum
-                                 inclusive-range]]
+  (:require [aoc22.utils :refer [file->seq safe-parseint sum]]
             [clojure.core.match :as m]
             [clojure.string :as str]
             [clojure.set :as set]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [criterium.core :refer [bench with-progress-reporting
+                                    quick-bench]]))
 
 ;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ;;; Day1
@@ -184,5 +185,5 @@
        sum))
 
 (comment
-  (time (day6 "day6" 4))
-  (time (day6 "day6" 14)))
+  (quick-bench (day6 "day6" 4))
+  (quick-bench (day6 "day6" 14)))

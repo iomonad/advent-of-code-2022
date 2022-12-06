@@ -10,6 +10,7 @@
                  [org.clojure/data.zip           "0.1.1"]
                  [org.clojure/tools.logging      "1.2.4"]
                  [flames                         "0.5.0"]
+                 [criterium                      "0.4.6"]
                  [org.clojure/math.numeric-tower "0.0.5"]
                  [org.clojure/math.combinatorics "0.1.6"]]
   :profiles {:dev {:dependencies [[integrant/repl                     "0.3.2"]
