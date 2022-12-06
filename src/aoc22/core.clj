@@ -3,7 +3,8 @@
                                  inclusive-range]]
             [clojure.core.match :as m]
             [clojure.string :as str]
-            [clojure.set :as set]))
+            [clojure.set :as set]
+            [clojure.java.io :as io]))
 
 ;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ;;; Day1
@@ -132,7 +133,6 @@
   (day4 "day4")
   (day4-bis "day4"))
 
-
 ;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ;;; Day5
 ;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,3 +167,22 @@
 (comment
   (time (day5 "day5" reverse))
   (time (day5 "day5" identity)))
+
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+;;; Day6
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+(defn day6
+  [file n]
+  (->> (slurp (io/resource file))
+       (partition n 1)
+       (map set)
+       (map count)
+       (map-indexed vector)
+       (sort-by second >)
+       first
+       sum))
+
+(comment
+  (time (day6 "day6" 4))
+  (time (day6 "day6" 14)))
