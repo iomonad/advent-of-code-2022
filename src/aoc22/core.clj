@@ -1,11 +1,15 @@
 (ns aoc22.core
-  (:require [aoc22.utils :refer [file->seq safe-parseint sum]]
+  (:require [aoc22.utils :refer [file->seq safe-parseint sum
+                                 recursive-sel]]
             [clojure.core.match :as m]
             [clojure.string :as str]
             [clojure.set :as set]
             [clojure.java.io :as io]
+            [com.rpl.specter :as sp]
             [criterium.core :refer [bench with-progress-reporting
-                                    quick-bench]]))
+                                    quick-bench]]
+            [instaparse.core :as insta]
+            [clojure.walk :as walk]))
 
 ;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ;;; Day1
@@ -89,9 +93,9 @@
   [file]
   (->> (file->seq file)
        (mapv (fn [x]
-              (mapv (partial map identity)
-                   [(subs x 0 (/ (count x) 2))
-                    (subs x (/ (count x) 2) (count x))])))
+               (mapv (partial map identity)
+                     [(subs x 0 (/ (count x) 2))
+                      (subs x (/ (count x) 2) (count x))])))
        (map (fn [[l r]] (apply str (set/intersection (set l) (set r)))))
        (mapcat rotate-chars)
        sum))
@@ -187,3 +191,105 @@
 (comment
   (quick-bench (day6 "day6" 4))
   (quick-bench (day6 "day6" 14)))
+
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+;;; Day7
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#_(defn day7
+    [file]
+    (->> (file->seq file)
+         ((fn [instructions]
+            (loop [[eip & tail]  instructions
+                   tree          []
+                   stack         {}]
+              (let [cursor (cond
+                             (= eip "$ cd ..")               :popd
+                             (str/starts-with? eip "$ cd")   :mdir
+                             (str/starts-with? eip "$ ls")   :nop
+                             (Character/isDigit (first eip)) :insert
+                             :else                           :nop)]
+                (m/match [(and eip (nil? tail)) cursor]
+                         [true _] stack
+                         [_    :nop]    (recur tail tree stack)
+                         [_    :ls]     (recur tail tree stack)
+                         [_    :mdir]   (recur tail (concat tree [(str/replace eip "$ cd" "")]) stack)
+                         [_    :popd]   (recur tail (drop-last tree) stack)
+                         [_    :insert] (recur tail tree
+                                               (update-in stack (concat tree [:wid]) concat
+                                                          ((comp vector read-string first) (str/split eip #"  ")))))))))
+         (map (partial sum))
+         (filter (partial >= 100000))
+         sum))
+
+(def day7-grammar
+  "S = cd | ls | dir | file
+
+    cd = <'$ cd '> path
+    ls = <'$ ls'>
+    dir = <'dir '> path
+    file = filesize <' '> path
+
+    <filesize> = #'\\d+'
+    <path> = #'[a-zA-Z0-9./]+'")
+
+(defn day7
+  [file]
+  (letfn [(idx-depth [workdir]
+            (if (= 1 (count workdir)) (identity workdir)
+                (cons workdir (idx-depth (pop workdir)))))]
+    (let [parser (insta/parser day7-grammar)]
+      (->> (file->seq file)
+           (map parser)
+           (map second)
+           (reduce (fn [{:keys [results workdir] :as acc} instruction]
+                     (m/match instruction
+                              [:cd   ".."  ] (update acc :workdir pop)
+                              [:cd   dir   ] (update acc :workdir conj dir)
+                              [:file size _] (assoc acc :results
+                                                    (reduce (fn [acc c]
+                                                              (update acc c (fnil + 0) (read-string size))) results
+                                                            (idx-depth workdir)))
+                              ;; NOP on other cases
+                              :else acc))
+                   {:workdir ["/"]
+                    :results {}})
+           :results
+           (map val)
+           (filter (partial >= 100000))
+           sum))))
+
+
+(defn day7-bis
+  [file]
+  (letfn [(idx-depth [workdir]
+            (if (= 1 (count workdir)) (identity workdir)
+                (cons workdir (idx-depth (pop workdir)))))]
+    (let [parser (insta/parser day7-grammar)
+          {:keys [results]}
+          (->> (file->seq file)
+               (map parser)
+               (map second)
+               (reduce (fn [{:keys [results workdir] :as acc} instruction]
+                         (m/match instruction
+                                  [:cd   ".."  ] (update acc :workdir pop)
+                                  [:cd   dir   ] (update acc :workdir conj dir)
+                                  [:file size _] (assoc acc :results
+                                                        (reduce (fn [acc c]
+                                                                  (update acc c (fnil + 0) (read-string size))) results
+                                                                (idx-depth workdir)))
+                                  ;; NOP on other cases
+                                  :else acc))
+                       {:workdir ["/"]
+                        :results {}}))
+          max-at-root (- 30000000 (- 70000000 (get results "/")))]
+      (->> results
+           (map val)
+           (filter #(>= % max-at-root))
+           sort
+           first))))
+
+(comment
+  (clojure.pprint/pprint (day7 "day7"))
+  (clojure.pprint/pprint (day7-bis "day7"))
+  )

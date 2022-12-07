@@ -19,5 +19,8 @@
     (is (= (day5 "day5" reverse)  "TGWSMRBPN")
         (= (day5 "day5" identity) "TZLTLWRNF")))
   (testing "day6"
-    (is (= (day6 "day6" 4) 1987)
-        (= (day6 "day6" 14) 3059))))
+    (is (= (day6 "day6" 4) 1987))
+    (is (= (day6 "day6" 14) 3059)))
+  (testing "day7"
+    (is (= (day7 "day7") 1306611))
+    (is (= (day7-bis "day7") 13210366))))

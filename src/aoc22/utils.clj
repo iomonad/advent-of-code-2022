@@ -1,6 +1,7 @@
 (ns aoc22.utils
   (:require [clojure.java.io :as io]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [com.rpl.specter :as sp]))
 
 (defn safe-parseint
   [x]
@@ -68,3 +69,7 @@
 
 (defn tsort [s]
   (treeduce merge* (map isort (partition-all 128 s))))
+
+(def recursive-sel (sp/recursive-path
+                    [akey]
+                    p [sp/ALL (sp/if-path [sp/FIRST #(= % akey)] sp/LAST [sp/LAST p])]))
