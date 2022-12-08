@@ -14,6 +14,7 @@
                  [org.clojure/math.numeric-tower "0.0.5"]
                  [com.rpl/specter                "1.1.4"]
                  [instaparse                     "1.4.12"]
+                 [net.mikera/core.matrix         "0.63.0"]
                  [org.clojure/math.combinatorics "0.1.6"]]
   :profiles {:dev {:dependencies [[integrant/repl                     "0.3.2"]
                                   [org.clojure/tools.namespace        "1.3.0"]]

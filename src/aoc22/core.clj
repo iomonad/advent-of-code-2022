@@ -5,6 +5,8 @@
             [clojure.string :as str]
             [clojure.set :as set]
             [clojure.java.io :as io]
+            [clojure.pprint :refer [pprint pprint-indent]]
+            [clojure.core.matrix :as mm]
             [com.rpl.specter :as sp]
             [criterium.core :refer [bench with-progress-reporting
                                     quick-bench]]
@@ -290,6 +292,19 @@
            first))))
 
 (comment
-  (clojure.pprint/pprint (day7 "day7"))
-  (clojure.pprint/pprint (day7-bis "day7"))
+  (pprint (day7 "day7"))
+  (pprint (day7-bis "day7")))
+
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+;;; Day8
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+(defn day8
+  [file]
+  (->> (file->seq file)
+       (mapv (partial mapv (comp read-string str identity)))
+       ))
+
+(comment
+  (pprint (day8 "test"))
   )
