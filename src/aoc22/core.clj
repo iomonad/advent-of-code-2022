@@ -308,3 +308,48 @@
 (comment
   (pprint (day8 "test"))
   )
+
+
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+;;; Day10
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+(defn day10
+  [file]
+  (let [decomposition
+        (->> (file->seq file #(str/split % #" "))
+             (reduce (fn [acc [i n]]
+                       (condp = i
+                         "addx" (conj acc 0 (read-string n))
+                         (conj acc 0))) [])
+             (reductions + 1))]
+    (->> (range 20 221 40)
+         (map (fn [idx] (* idx (nth decomposition (dec idx)))))
+         sum)))
+
+
+;;; https://gist.github.com/xero/59c8a62ff1fe564264f9
+(defn day10-bis
+  [file]
+  (let [decomposition
+        (->> (file->seq file #(str/split % #" "))
+             (reduce (fn [acc [i n]]
+                       (condp = i
+                         "addx" (conj acc 0 (read-string n))
+                         (conj acc 0))) [])
+             (reductions + 1))]
+    (->> (map-indexed
+          (fn [i x]
+            (cond
+              (<= (dec x) (mod i 40) (+ 1 x)) "░"
+              :else " "))
+          decomposition)
+         (partition 40)
+         (map (partial apply str))
+         (clojure.pprint/pprint))))
+
+(comment
+  (day10 "day10")
+  (day10-bis "day10") ;; => RGLRBZAU
+  )
