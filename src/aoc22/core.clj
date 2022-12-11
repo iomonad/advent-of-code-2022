@@ -353,3 +353,53 @@
   (day10 "day10")
   (day10-bis "day10") ;; => RGLRBZAU
   )
+
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+;;; Day11
+;;; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+(defn day11
+  [file]
+  (let [monkey-state
+        (->> (file->seq file)
+             (partition-by empty?)
+             (remove #(= 1 (count %)))
+             (reduce (fn [acc [monk & def]]
+                       (let [monkey-id (read-string (last (re-find #"Monkey (\d+):" monk)))
+                             [si op test condt condf] def
+                             items (as-> (str/replace si "  Starting items: " "") $
+                                     (str/split $ #",")
+                                     (map (comp read-string str/trim) $))
+                             op (as-> (str/replace op "  Operation: " "") $
+                                  (str/split $ #" ")
+                                  (map keyword $))
+                             div-test (last (re-find #"  Test: divisible by (\d+)" test))]
+                         (assoc acc monkey-id {:start-items (vec items)
+                                               :operation op
+                                               :div-test (read-string div-test)
+                                               :tt (read-string (last (re-find #"    If true: throw to monkey (\d+)" condt)))
+                                               :tf (read-string (last (re-find #"    If false: throw to monkey (\d+)" condf)))})))
+                     (sorted-map)))]
+    (loop [round (range 20)
+           state monkey-state]
+      (if (= round 19) state
+          (reduce-kv (fn [acc k {:keys [start-items operation
+                                       div-test tt tf]}]
+                       (assoc acc k
+                              (map (fn [])
+                                   start-items)))
+                     (sorted-map)
+                     state)
+          ))))
+
+
+(defn day11-bis
+  [file]
+  (->> (file->seq file)))
+
+
+(comment
+  (quick-bench (day11 "day11")
+               )
+  (quick-bench (day11-bis "day11"))
+  )
